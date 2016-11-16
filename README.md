@@ -1,4 +1,4 @@
-# README: Turnitin Pittsburgh Backend Exercise
+# README: Turnitin Pittsburgh Back-end Coding Exercise
 
 Welcome! We're excited you've decided to talk with us about a position on our
 engineering team.
@@ -16,9 +16,9 @@ given different circumstances.
 
 Below are two sections:
 
-* Instructions: the problem we'd like you to solve along with expectations we
+* *Instructions*: the problem we'd like you to solve along with expectations we
   have about your solution.
-* Logistics: constraints around the problem, and how we'd like you to
+* *Logistics*: constraints around the problem, and how we'd like you to
   communicate your solution to us
 
 # Instructions
@@ -32,42 +32,68 @@ able to do the following with the students:
 * Retrieve a particular student by unique identifier
 * Search students in the system
 
-__0.__ Format -- the application should accept and produce JSON.
+__1.__ Format
 
-__1.__ Data -- the student record has the following fields:
+The application should accept and produce JSON.
+
+__2.__ Data
+
+The student record has the following fields:
 
 * Either an `email` or a `username` must be non-blank, and whichever (or both)
-  are defined they must be unique for that field.
+  are defined the value must be unique within that field. Additionally, the
+  `email` field should contain a superficially valid email.
 * A `first_name` and `last_name`; the `last_name` is required to be non-blank.
 * A `display_name`, which if not defined at creation should be the first name
   and last names joined with a space.
 * The `created_at` datetime when the student was added to the system, which
-  should be assigned by the system when the student is created.
-* The `started_at` of the student started at an institution; if not specified
-  it should be the date the student was added to the system.
+  should be assigned by the system when the student is created. It should be
+  formatted 'YYYY-MM-DD HH:mm:ss' -- for example '2016-11-08 22:18:03' for
+  'November 8, 2016 at 10:18:03 PM'.
+* The `started_at` date of the student started at an institution; if not
+  specified it should be the date the student was added to the system. It
+  should be formatted 'YYYY-MM-DD' -- for example, '2016-11-08' for 'November 8,
+  2016'.
 
-__2.__ Search -- the students may be searched by the following fields:
+__3.__ Search
 
-* `name` (which is a partial match against any of the first name, last name, or
-  display name)
+The students may be searched by the following fields:
+
+* `name` (which is a partial match against any of the first name, last name,
+  and display name)
 * `username` (partial match)
 * `email` (partial match)
 * `started_after` (date formatted `YYYY-MM-DD` that will return students
   who started on or after a particular date)
 
-If multiple fields provided any returned records must match all of them, so
-treat them as an `AND`.
+If multiple fields provided any returned records must match all of them -- that
+is, you should treat them as an `AND`.
 
-__3.__ Routes -- the routes you should use are:
+__4.__ Routes
+
+The routes you should use are:
 
 * Create a student: `POST /students`
 * Search students: `GET /students`
 * Retrieve a student: `GET /students/{identifier}`
 * Health check: `GET /` should return a successful HTTP status
 
+__5.__ Other thoughts
+
+During our discussion we'll talk about your code and decisions you've made.
+We may also challenge assumptions in the problem, or add requirements. For
+example:
+
+* How might student data be changed?
+* What if we wanted to create many students at once?
+* What if we wanted to assign each student to a school? More than one school?
+* What if we wanted to track whether the student has logged in?
+
 ## Languages and Environment
 
-__1.__ You may use any of the following languages to solve this problem:
+__1.__ Languages
+
+You may use any of the following languages to solve this problem:
 
 * Python
 * JavaScript
@@ -75,19 +101,29 @@ __1.__ You may use any of the following languages to solve this problem:
 * Go
 * Java
 
-__2.__ If you use external libraries you should use standard dependency
-management tools to declare them -- for example, `requirements.txt` for Python
-projects, `Gemfile` for Ruby projects, etc.
+__2.__ Dependencies
 
-__3.__ If you use a relational database please use Postgres.
+If you use external libraries you should use standard dependency management
+tools to declare them -- for example, `requirements.txt` for Python projects,
+`Gemfile` for Ruby projects, etc.
 
-__4.__ Using Docker (with a `Dockerfile`) is also just fine. We use Docker for
+__3.__ Database
+
+If you use a relational database please use Postgres.
+
+__4.__ Docker (optional)
+
+Using Docker (with a `Dockerfile`) is also just fine. We use Docker for
 development, testing, and production here, but you're not required to know it
 when you start.
 
-__5.__ Unit tests are strongly encouraged.
+__5.__ Testing
 
-__6.__ Please include with your solution instructions on what we need to do to
+Unit tests are strongly encouraged.
+
+__6.__ Guidance
+
+Please include with your solution instructions on what we need to do to
 run it.
 
 ## Checking your work
@@ -97,9 +133,9 @@ exercise your solution. You can run it in two ways:
 
 __1.__ Run without Docker
 
-It requires python to be installed and a particular module to be installed.
-[Virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/) is a
-great way to manage and isolate dependencies, and you can do so with the
+The checker requires python to be installed and a particular module to be
+installed.  [Virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/)
+is a great way to manage and isolate dependencies, and you can do so with the
 exercise like this, assuming you're using some sort of Unix-y command-line:
 
 ```
@@ -141,17 +177,20 @@ $ docker run --rm turnitin-check http://myhost:8888
 
 # Logistics
 
-__1.__ You should take a max of two hours to complete this exercise. We want to
-be both respectful of your time and fair to other candidates who might not have
+__1.__ Timeframe
+
+You should take a max of two hours to complete this exercise. We want to be
+both respectful of your time and fair to other candidates who might not have
 a whole weekend to work on it.
 
-__2.__ You will need to use git for this exercise. To get these instructions
-and a repo with test scripts do the following:
+__2.__ Git
 
-A: [Create a bitbucket account](https://bitbucket.org/account/signup/) if you
+You will need to use git for this exercise. To get these instructions and a
+repo with test scripts do the following:
+
+1. [Create a bitbucket account](https://bitbucket.org/account/signup/) if you
 don't already have one. For the examples below we assume a user `pusheen`.
-
-B: Clone our repository:
+2. Clone our repository:
 
 ```
 # Using ssh
@@ -161,24 +200,27 @@ $ git clone git@bitbucket.org:lightsidelabs/backend-code-exercise.git
 $ git clone https://pusheen@bitbucket.org/lightsidelabs/backend-code-exercise.git
 ```
 
-__3.__ Once you are done you can put your solution in your own repository by
-adding it as a remote and pushing to it.
+__3.__ Remote
 
-A: Create a new repo via the bitbucket UI, let's assume you call it
+Once you are done you can put your solution in your own repository by adding it
+as a remote and pushing to it.
+
+1. Create a new repo via the bitbucket UI, let's assume you call it
 `backend-code-exercise` to mirror ours.
-
-B: Please make the repository *private*, we'd like to make sure that every
+2. Please make the repository *private*, we'd like to make sure that every
 candidate's work is his or her own.
-
-C: Add your repo as a remote and push:
+3. Add your repo as a remote and push:
 
 ```
 $ git remote add myrepo ssh://git@bitbucket.org:pusheen/backend-code-exercise.git
 $ git push myrepo master
 ```
 
-__4.__ Give Bitbucket user `cwinters` access to your repository.
+__4.__ Access
 
-__5.__ At least a day before your in-person interview, email
-`cwinters@turnitin.com` your repo address.
+Give Bitbucket user `cwinters` read access to your repository.
 
+__5.__ Notify us
+
+At least a day before your in-person interview, email `cwinters@turnitin.com`
+your repo address.
