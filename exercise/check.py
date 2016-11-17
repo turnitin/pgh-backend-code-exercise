@@ -1,11 +1,12 @@
 import random
+import string
 import sys
 import unittest
 from datetime import datetime
 
 import requests
 
-BASE = None
+BASE_URL = None
 INVALID_REQUESTS = [400, 409, 422]
 VALID_REQUESTS = [200, 201, 204]
 
@@ -25,9 +26,6 @@ class VerifyStudents(unittest.TestCase):
         'Ulfmanson', 'Violet', 'Walters', 'Xavier', 'Yellen', 'Zingle',
     ]
 
-    def allowed_chars(self):
-        return 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-
     def get(self, query_args={}, path=None):
         return requests.get(self.url(path), params=query_args)
 
@@ -35,12 +33,12 @@ class VerifyStudents(unittest.TestCase):
         return requests.post(self.url(path), json=body_dict)
 
     def random_string(self, length=10):
-        return ''.join([random.choice(self.allowed_chars()) for i in range(length)])
+        return ''.join([random.choice(string.ascii_letters) for i in range(length)])
 
     def url(self, path=None):
         if path is None:
             path = self.path()
-        return BASE + path
+        return BASE_URL + path
 
     def valid_student(self, **kwargs):
         student = {
@@ -80,19 +78,31 @@ class VerifyCreate(VerifyStudents):
 
     def test_fail_duplicate_email(self):
         to_create = self.valid_student()
-        self.assert_post_in(to_create, VALID_REQUESTS, 'With valid data')
-        self.assert_post_in(to_create, INVALID_REQUESTS, 'With duplicate email')
+        self.assert_post_in(to_create, VALID_REQUESTS, 'With valid data having an arbitrary email')
+        self.assert_post_in(to_create, INVALID_REQUESTS, 'With valid data but the same arbitrary email')
 
-    def test_creates_display_name(self):
+    def test_generates_display_name(self):
         to_create = self.valid_student()
-        doc = self.assert_post_in(to_create, VALID_REQUESTS, 'With valid data').json()
+        doc = self.assert_post_in(
+            to_create, VALID_REQUESTS,
+            'With valid data to check display_name'
+        ).json()
         self.assertEqual(
             doc['display_name'],
             '{} {}'.format(to_create['first_name'], to_create['last_name']))
 
+    def test_can_provide_display_name(self):
+        to_create = self.valid_student(display_name='The Boss')
+        doc = self.assert_post_in(
+            to_create, VALID_REQUESTS,
+            'With valid data to override generated display_name'
+        ).json()
+        self.assertEqual(doc['display_name'], 'The Boss')
+
     def test_can_fetch_created(self):
         to_create = self.valid_student()
-        created = self.assert_post_in(to_create, VALID_REQUESTS, 'With valid data').json()
+        created = self.assert_post_in(
+            to_create, VALID_REQUESTS, 'With valid data to re-fetch').json()
         fetched = self.get(path='/students/{}'.format(created['id'])).json()
         for k in to_create:
             self.assertEqual(fetched[k], to_create[k])
@@ -100,7 +110,10 @@ class VerifyCreate(VerifyStudents):
 
     def test_fills_in_date_fields(self):
         to_create = self.valid_student()
-        created = self.assert_post_in(to_create, VALID_REQUESTS, 'With valid data').json()
+        created = self.assert_post_in(
+            to_create, VALID_REQUESTS,
+            'With valid data to check dates'
+        ).json()
         for date_field in ['created_at', 'started_at']:
             self.assertIn(date_field, created)
             self.assertIsNotNone(created[date_field])
@@ -124,10 +137,10 @@ class VerifySearch(VerifyStudents):
     def path(self):
         return '/students'
 
-    def assert_first_names(self, doc, sorted_expected_names):
-        self.assertEqual(len(doc['students']), len(sorted_expected_names))
-        names = sorted([s['first_name'] for s in doc['students']])
-        self.assertEqual(names, sorted_expected_names)
+    def assert_first_names(self, doc, expected_sorted_names):
+        self.assertEqual(len(doc['students']), len(expected_sorted_names))
+        actual_sorted_names = sorted([s['first_name'] for s in doc['students']])
+        self.assertEqual(actual_sorted_names, expected_sorted_names)
 
     def test_no_criteria_is_invalid(self):
         self.assert_get_in(INVALID_REQUESTS, 'With no criteria')
@@ -141,31 +154,29 @@ class VerifySearch(VerifyStudents):
         self.assertEqual(doc['students'], [])
 
     def test_single_match_first_name(self):
-        self.create(first_name="Steve")
-        self.create(first_name="Simone")
-        self.create(first_name="Sylvie")
-        self.create(first_name="Sharky")
+        for first_name in ['Steve', 'Simone', 'Sylvie', 'Sharky']:
+            self.create(first_name=first_name)
         doc = self.assert_get_in(
-            [200], 'With a match',
+            [200], 'With a single match on first_name',
             query_args={'name': 'imon'}
         ).json()
         self.assertEqual(len(doc['students']), 1)
         self.assertEqual(doc['students'][0]['first_name'], 'Simone')
 
-    def test_multiple_match_first_name(self):
-        self.create(first_name="Jamie")
-        self.create(first_name="James")
+    def test_multiple_match_any_name(self):
+        self.create(first_name="Jamie", last_name="Jameson")
+        self.create(first_name="Jimbo", display_name="James Garrison III")
         self.create(first_name="Jennifer")
         self.create(first_name="Jackie")
         doc = self.assert_get_in(
-            [200], 'With multiple matches',
+            [200], 'With multiple matches on name',
             query_args={'name': 'JAM'}
         ).json()
-        self.assert_first_names(doc, ['James', 'Jamie'])
+        self.assert_first_names(doc, ['Jamie', 'Jimbo'])
 
     def test_no_match_started_after(self):
         doc = self.assert_get_in(
-            [200], 'With single match',
+            [200], 'With no match checking started_after',
             query_args={'started_after': '2019-10-31'}
         ).json()
         self.assertEqual(doc['students'], [])
@@ -176,7 +187,7 @@ class VerifySearch(VerifyStudents):
         self.create(first_name="Cindy", started_at="2018-04-08")
         self.create(first_name="Carl", started_at="2017-09-12")
         doc = self.assert_get_in(
-            [200], 'With multiple matches',
+            [200], 'With multiple matches checking started_after',
             query_args={'started_after': '2017-10-31'}
         ).json()
         self.assert_first_names(doc, ['Carol', 'Cindy'])
@@ -187,13 +198,13 @@ if __name__ == '__main__':
         print("Usage: python {} url-of-solution".format(sys.argv[0]))
         sys.exit(1)
 
-    BASE = sys.argv[1].rstrip('/')
+    BASE_URL = sys.argv[1].rstrip('/')
 
     # lop this off so unittest doesn't try to do something with it
     del(sys.argv[1])
 
     try:
-        response = requests.get(BASE + '/')
+        response = requests.get(BASE_URL + '/')
         if response.status_code >= 400:
             print("FAIL: Health check got bad status ({}), not continuing".format(response.status_code))
             sys.exit(1)
