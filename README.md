@@ -40,6 +40,8 @@ __2.__ Data
 
 The student record has the following fields:
 
+* An `id` that uniquely identifies the student. This will be provided by the
+  server when the student is created and may not be changed.
 * Either an `email` or a `username` must be non-blank, and whichever (or both)
   are defined the value must be unique within that field. Additionally, the
   `email` field should contain a superficially valid email.
@@ -67,7 +69,12 @@ The students may be searched by the following fields:
   who started on or after a particular date)
 
 If multiple fields provided any returned records must match all of them -- that
-is, you should treat them as an `AND`.
+is, you should treat them as an `AND`. For example, the following query would
+find students with 'Jen' in their name who started after 'November 15, 2016':
+
+```
+GET /students?name=Jen&started_after=2016-11-15
+```
 
 __4.__ Routes
 
@@ -75,7 +82,8 @@ The routes you should use are:
 
 * Create a student: `POST /students`
 * Search students: `GET /students`
-* Retrieve a student: `GET /students/{identifier}`
+* Retrieve a student: `GET /students/{id}` (where `{id}` is the value assigned
+  by the server)
 * Health check: `GET /` should return a successful HTTP status
 
 __5.__ Other thoughts
