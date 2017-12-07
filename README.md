@@ -9,10 +9,10 @@ whiteboard during an interview isn't a great way to have a conversation. And
 even if we sit down and pair during an interview it's a higher pressure
 situation than it could be.
 
-Instead we ask that you read these instructions and do an hour or two of work,
-on your time, to complete the exercise. During the interview we'll talk about
-decisions you've made, the resulting application, and how you might change it
-given different circumstances.
+Instead we ask that you read these instructions and do *at most* a few hours of
+work, on your time, to complete the exercise. During the interview we'll talk
+about decisions you've made, the resulting application, and how you might
+change it given different circumstances.
 
 Below are two sections:
 
@@ -34,7 +34,7 @@ able to do the following with the students:
 
 __1.__ Format
 
-The application should accept and produce JSON.
+The application should accept and produce JSON with appropriate content types.
 
 __2.__ Data
 
@@ -84,7 +84,7 @@ The routes you should use are:
 * Search students: `GET /students`
 * Retrieve a student: `GET /students/{id}` (where `{id}` is the value assigned
   by the server)
-* Health check: `GET /` should return a successful HTTP status
+* Health check: `GET /service/health` should return a successful HTTP status
 
 __5.__ Other thoughts
 
@@ -106,80 +106,41 @@ You may use any of the following languages to solve this problem:
 * Python
 * JavaScript
 * Ruby
-* Go
-* Java
 
-__2.__ Dependencies
+__2.__ Runtime
+
+Your solution must be runnable via Docker. There's a starter
+`docker-compose.yaml` file in this directory you can use to run your solution
+with a Postgres database and Redis key/value store. When we run your
+application we'll check out your git repository and run `docker-compose up` and
+expect it to run.
 
 If you use external libraries you should use standard dependency management
 tools to declare them -- for example, `requirements.txt` for Python projects,
-`Gemfile` for Ruby projects, etc.
-
-__3.__ Database
-
-If you use a relational database please use Postgres.
-
-__4.__ Docker (optional)
-
-Using Docker (with a `Dockerfile`) is also just fine. We use Docker for
-development, testing, and production here, but you're not required to know it
-when you start.
+`Gemfile` for Ruby projects, etc. The steps to install those dependencies
+should be in your `Dockerfile`.
 
 __5.__ Testing
 
-Unit tests are strongly encouraged.
-
-__6.__ Guidance
-
-Please include with your solution instructions on what we need to do to
-run it.
+Unit tests are encouraged but not required; if you're trying to implement this
+solution in a different language we'll understand if you spend your time on the
+solution rather than the tests. (Especially because we provide a test harness,
+see below.)
 
 ## Checking your work
 
 There is a directory in this repo `exercise/` with a script that you can use to
-exercise your solution. You can run it in two ways:
-
-__1.__ Run without Docker
-
-The checker requires python to be installed and a particular module to be
-installed.  [Virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/)
-is a great way to manage and isolate dependencies, and you can do so with the
-exercise like this, assuming you're using some sort of Unix-y command-line:
-
-```
-$ cd exercise
-$ virtualenv venv
-$ source venv/bin/activate
-$ pip install -r requirements.txt
-```
-
-If you don't have `virtualenv` you can install with
-
-```
-$ sudo pip install virtualenv
-```
-
-Once you've got the environment setup you can run it like this:
-
-```
-$ python check.py http://myhost:8888
-```
-
-where `http://myhost:8888` is the URL where your solution is running.
-
-It uses the same data every time to run its checks so you'll need to have a
-clean datastore before you run it.
-
-__2.__ Run with Docker
-
-If you already have Docker installed you can build a container and
-point it at your solution. Note that mapping the host on which your solution is
-running (`myhost`, below) to the host known by the docker container may be
-tricky.
+exercise your solution with Docker. All you'll need to do is build it:
 
 ```
 $ cd exercise
 $ docker build -t turnitin-check .
+```
+
+And then point it at your solution, passing in the top-level URL to a running
+server:
+
+```
 $ docker run --rm turnitin-check http://myhost:8888
 ```
 
@@ -187,7 +148,7 @@ $ docker run --rm turnitin-check http://myhost:8888
 
 __1.__ Timeframe
 
-You should take a max of two hours to complete this exercise. We want to be
+You should take a max of three hours to complete this exercise. We want to be
 both respectful of your time and fair to other candidates who might not have
 a whole weekend to work on it.
 
@@ -196,16 +157,16 @@ __2.__ Git
 You will need to use git for this exercise. To get these instructions and a
 repo with test scripts do the following:
 
-1. [Create a bitbucket account](https://bitbucket.org/account/signup/) if you
-don't already have one. For the examples below we assume a user `pusheen`.
+1. [Create a Github account](https://github.com/join) if you don't already have
+   one. For the examples below we assume a user `pusheen`.
 2. Clone our repository:
 
 ```
 # Using ssh
-$ git clone git@bitbucket.org:lightsidelabs/backend-code-exercise.git
+$ git clone git@github.com:turnitin/pgh-backend-code-exercise.git
 
 # Using https
-$ git clone https://pusheen@bitbucket.org/lightsidelabs/backend-code-exercise.git
+$ git clone https://pusheen@github.com/turnitin/pgh-backend-code-exercise.git
 ```
 
 __3.__ Remote
@@ -213,22 +174,39 @@ __3.__ Remote
 Once you are done you can put your solution in your own repository by adding it
 as a remote and pushing to it.
 
-1. Create a new repo via the bitbucket UI, let's assume you call it
+1. Create a new repo via the github UI, let's assume you call it
 `backend-code-exercise` to mirror ours.
 2. Please make the repository *private*, we'd like to make sure that every
 candidate's work is his or her own.
 3. Add your repo as a remote and push:
 
 ```
-$ git remote add myrepo ssh://git@bitbucket.org:pusheen/backend-code-exercise.git
+$ git remote add myrepo ssh://git@github.com:pusheen/backend-code-exercise.git
 $ git push myrepo master
 ```
 
 __4.__ Access
 
-Give Bitbucket user `cwinters` read access to your repository.
+Give Github user `cwinters` read access to your repository.
 
 __5.__ Notify us
 
 At least a day before your in-person interview, email `cwinters@turnitin.com`
 your repo address.
+
+__6.__ Resources
+
+Here are some resources that may be useful:
+
+* [Docker for Mac](https://docs.docker.com/docker-for-mac/) or
+  [Docker for Windows](https://docs.docker.com/docker-for-windows/) should
+  help you get Docker installed if you don't already have it. (If you're using
+  a Linux desktop you can just `sudo apt-get install docker`) Another resource
+  is [Docker Machine](https://docs.docker.com/machine/) which walks you through
+  installing Docker on a VM running on VirtualBox; you may prefer that if
+  you've already got that installed.
+* [Docker Compose](https://docs.docker.com/compose/) -- This should already be
+  installed if you use the Docker for Mac/Windows options, but if not it's just
+  a binary you can install. Note that the
+  [sample project](https://docs.docker.com/compose/gettingstarted/) uses Flask!
+  (We use Flask.)
