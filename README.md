@@ -41,7 +41,7 @@ __2.__ Data
 The student record has the following fields:
 
 * An `id` that uniquely identifies the student. This will be provided by the
-  server when the student is created and may not be changed.
+  server when the student is created and must not be changed after creation.
 * Either an `email` or a `username` must be non-blank, and whichever (or both)
   are defined the value must be unique within that field. Additionally, the
   `email` field should contain a superficially valid email.
@@ -115,10 +115,15 @@ with a Postgres database and Redis key/value store. When we run your
 application we'll check out your git repository and run `docker-compose up` and
 expect it to run.
 
+Noe that your solution does not have use either Postgres or Redis to store its
+state -- we'll restart your service every time we check its output. But if
+you'd like to use a persistent store for state you should use one of those two.
+
 If you use external libraries you should use standard dependency management
 tools to declare them -- for example, `requirements.txt` for Python projects,
 `Gemfile` for Ruby projects, etc. The steps to install those dependencies
-should be in your `Dockerfile`.
+should be in your `Dockerfile` so that when we run `docker-compose build` the
+container for your service will be built and ready to go.
 
 __5.__ Testing
 
@@ -129,7 +134,7 @@ see below.)
 
 ## Checking your work
 
-There is a directory in this repo `exercise/` with a script that you can use to
+There is a `exercise/` directory in this repo with a script that you can use to
 exercise your solution with Docker. All you'll need to do is build it:
 
 ```
@@ -142,6 +147,30 @@ server:
 
 ```
 $ docker run --rm turnitin-check http://myhost:8888
+```
+
+If everything is working you should expect to see output like this:
+
+```
+test_can_fetch_created (__main__.VerifyCreate) ... ok
+test_can_provide_display_name (__main__.VerifyCreate) ... ok
+test_fail_duplicate_email (__main__.VerifyCreate) ... ok
+test_fail_missing_email_or_username (__main__.VerifyCreate) ... ok
+test_fail_missing_last_name (__main__.VerifyCreate) ... ok
+test_fills_in_date_fields (__main__.VerifyCreate) ... ok
+test_generates_display_name (__main__.VerifyCreate) ... ok
+test_fetch_invalid_id (__main__.VerifyFetch) ... ok
+test_empty_results_with_records_and_no_match (__main__.VerifySearch) ... ok
+test_multiple_match_any_name (__main__.VerifySearch) ... ok
+test_multiple_matches_started_after (__main__.VerifySearch) ... ok
+test_no_criteria_is_invalid (__main__.VerifySearch) ... ok
+test_no_match_started_after (__main__.VerifySearch) ... ok
+test_single_match_first_name (__main__.VerifySearch) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.106s
+
+OK
 ```
 
 # Logistics
@@ -201,10 +230,10 @@ Here are some resources that may be useful:
 * [Docker for Mac](https://docs.docker.com/docker-for-mac/) or
   [Docker for Windows](https://docs.docker.com/docker-for-windows/) should
   help you get Docker installed if you don't already have it. (If you're using
-  a Linux desktop you can just `sudo apt-get install docker`) Another resource
-  is [Docker Machine](https://docs.docker.com/machine/) which walks you through
-  installing Docker on a VM running on VirtualBox; you may prefer that if
-  you've already got that installed.
+  a Linux desktop you can just `sudo apt-get install docker` -- lucky you!)
+  Another resource is [Docker Machine](https://docs.docker.com/machine/) which
+  walks you through installing Docker on a VM running on VirtualBox; you may
+  prefer that if you've already got VirtualBox installed.
 * [Docker Compose](https://docs.docker.com/compose/) -- This should already be
   installed if you use the Docker for Mac/Windows options, but if not it's just
   a binary you can install. Note that the

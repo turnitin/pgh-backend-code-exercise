@@ -188,7 +188,7 @@ class VerifySearch(VerifyStudents):
         self.create(first_name="Carl", started_at="2017-09-12")
         doc = self.assert_get_in(
             [200], 'With multiple matches checking started_after',
-            query_args={'started_after': '2017-10-31'}
+            query_args={'started_after': '2018-03-31'}
         ).json()
         self.assert_first_names(doc, ['Carol', 'Cindy'])
 
@@ -204,13 +204,11 @@ if __name__ == '__main__':
     del(sys.argv[1])
 
     try:
-        response = requests.get(BASE_URL + '/')
+        response = requests.get(BASE_URL + '/service/health')
         if response.status_code >= 400:
             print("FAIL: Health check got bad status ({}), not continuing".format(response.status_code))
             sys.exit(1)
     except requests.RequestException as e:
         print("FAIL: Caught exception with health check -- {}".format(e))
         sys.exit(1)
-
-    print("OK: Health check")
     unittest.main(verbosity=2)
