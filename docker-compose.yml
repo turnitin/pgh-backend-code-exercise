@@ -3,7 +3,7 @@ version: "2.1"
 services:
     postgres:
         container_name: postgres
-        image: postgres-alpine:9.6
+        image: postgres:9.6-alpine
         ports:
             - 5432:5432
         volumes:
