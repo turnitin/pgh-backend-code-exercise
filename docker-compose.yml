@@ -3,13 +3,13 @@ version: "2.1"
 services:
     postgres:
         container_name: postgres
-        image: postgres-alpine:9.6
+        image: postgres:9.6-alpine
         ports:
             - 5432:5432
         volumes:
             - /var/lib/postgresql/data
         healthcheck:
-            test: psql --username lightside -c "SELECT COUNT(1) FROM pg_catalog.pg_roles;"
+            test: psql --username postgres -c "SELECT COUNT(1) FROM pg_catalog.pg_roles;"
             interval: 30s
             timeout: 10s
             retries: 3
