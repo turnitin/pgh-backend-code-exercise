@@ -204,13 +204,14 @@ Once you are done you can put your solution in your own repository by adding it
 as a remote and pushing to it.
 
 1. Create a new repo via the github UI, let's assume you call it
-`backend-code-exercise` to mirror ours.
-2. Please make the repository *private*, we'd like to make sure that every
-candidate's work is his or her own.
+   `backend-code-exercise` to mirror ours.
+2. If possible use a private repo. If you've run out of private repos on github
+   them no worries, we'd just like to make sure that every candidate's work is
+   his or her own.
 3. Add your repo as a remote and push:
 
 ```
-$ git remote add myrepo ssh://git@github.com:pusheen/backend-code-exercise.git
+$ git remote add myrepo git@github.com:pusheen/backend-code-exercise.git
 $ git push myrepo master
 ```
 
