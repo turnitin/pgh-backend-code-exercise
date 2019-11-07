@@ -9,16 +9,16 @@ whiteboard during an interview isn't a great way to have a conversation. And
 even if we sit down and pair during an interview it's a higher pressure
 situation than it could be.
 
-Instead we ask that you read these instructions and do *at most* a few hours of
+Instead we ask that you read these instructions and do _at most_ a few hours of
 work, on your time, to complete the exercise. During the interview we'll talk
 about decisions you've made, the resulting application, and how you might
 change it given different circumstances.
 
 Below are two sections:
 
-* *Instructions*: the problem we'd like you to solve along with expectations we
+- _Instructions_: the problem we'd like you to solve along with expectations we
   have about your solution.
-* *Logistics*: constraints around the problem, and how we'd like you to
+- _Logistics_: constraints around the problem, and how we'd like you to
   communicate your solution to us
 
 # Instructions
@@ -28,44 +28,38 @@ Below are two sections:
 We're starting a new application and we need to store students! We'd like to be
 able to do the following with the students:
 
-* Create a student
-* Retrieve a particular student by unique identifier
-* Search students in the system
+- Create a student
+- Retrieve a particular student by unique identifier
+- Search students in the system
 
-__1.__ Format
+**1.** Format
 
 The application should accept and produce JSON with appropriate content types.
 
-__2.__ Data
+**2.** Data
 
 The student record has the following fields:
 
-* An `id` that uniquely identifies the student. This will be provided by the
+- An `id` that uniquely identifies the student. This will be provided by the
   server when the student is created and must not be changed after creation.
-* Either an `email` or a `username` must be non-blank, and whichever (or both)
-  are defined the value must be unique within that field. Additionally, the
-  `email` field should contain a superficially valid email.
-* A `first_name` and `last_name`; the `last_name` is required to be non-blank.
-* A `display_name`, which if not defined at creation should be the first name
-  and last names joined with a space.
-* The `created_at` datetime when the student was added to the system, which
+- An `email` must be non-blank unique value. Additionally, the `email` field should contain a superficially valid email.
+- A `first_name` and `last_name`; the `last_name` is required to be non-blank.
+- The `created_at` datetime when the student was added to the system, which
   should be assigned by the system when the student is created. It should be
   formatted 'YYYY-MM-DD HH:mm:ss' -- for example '2016-11-08 22:18:03' for
   'November 8, 2016 at 10:18:03 PM'.
-* The `started_at` date of the student started at an institution; if not
+- The `started_at` date of the student started at an institution; if not
   specified it should be the date the student was added to the system. It
   should be formatted 'YYYY-MM-DD' -- for example, '2016-11-08' for 'November 8,
   2016'.
 
-__3.__ Search
+**3.** Search
 
 The students may be searched by the following fields:
 
-* `name` (which is a partial match against any of the first name, last name,
-  and display name)
-* `username` (partial match)
-* `email` (partial match)
-* `started_after` (date formatted `YYYY-MM-DD` that will return students
+- `name` (which is a partial match against any of the first name and last name)
+- `email` (partial match)
+- `started_after` (date formatted `YYYY-MM-DD` that will return students
   who started on or after a particular date)
 
 If multiple fields provided any returned records must match all of them -- that
@@ -76,56 +70,44 @@ find students with 'Jen' in their name who started after 'November 15, 2016':
 GET /students?name=Jen&started_after=2016-11-15
 ```
 
-__4.__ Routes
+**4.** Routes
 
 The routes you should use are:
 
-* Create a student: `POST /students`
-* Search students: `GET /students`
-* Retrieve a student: `GET /students/{id}` (where `{id}` is the value assigned
+- Create a student: `POST /students`
+- Search students: `GET /students`
+- Retrieve a student: `GET /students/{id}` (where `{id}` is the value assigned
   by the server)
-* Health check: `GET /service/health` should return a successful HTTP status
+- Health check: `GET /service/health` should return a successful HTTP status
 
-__5.__ Other thoughts
+**5.** Other thoughts
 
 During our discussion we'll talk about your code and decisions you've made.
 We may also challenge assumptions in the problem, or add requirements. For
 example:
 
-* How might student data be changed?
-* What if we wanted to create many students at once?
-* What if we wanted to assign each student to a school? More than one school?
-* What if we wanted to track whether the student has logged in?
+- How might student data be changed?
+- What if we wanted to create many students at once?
+- What if we wanted to assign each student to a school? More than one school?
+- What if we wanted to track whether the student has logged in?
 
 ## Languages and Environment
 
-__1.__ Languages
+**1.** Language
 
-You may use any of the following languages to solve this problem:
+Please complete the solution using Java 8 or higher.
 
-* Python
-* JavaScript
-* Ruby
-
-__2.__ Runtime
+**2.** Runtime
 
 Your solution must be runnable via Docker. There's a starter
 `docker-compose.yaml` file in this directory you can use to run your solution
-with a Postgres database and Redis key/value store. When we run your
-application we'll check out your git repository and run `docker-compose up` and
-expect it to run.
+with a Postgres database. You may replace the database with one of your choosing if you are not comfortable with Postgres.
 
-Noe that your solution does not have use either Postgres or Redis to store its
-state -- we'll restart your service every time we check its output. But if
-you'd like to use a persistent store for state you should use one of those two.
+When we run your application we'll check out your git repository and run `docker-compose up` and expect it to run without error.
 
-If you use external libraries you should use standard dependency management
-tools to declare them -- for example, `requirements.txt` for Python projects,
-`Gemfile` for Ruby projects, etc. The steps to install those dependencies
-should be in your `Dockerfile` so that when we run `docker-compose build` the
-container for your service will be built and ready to go.
+Your solution should use Maven or Gradle to build and manage dependencies. The steps to install those dependencies should be in your `Dockerfile` so that when we run `docker-compose build` the container for your service will be built and ready to go.
 
-__5.__ Testing
+**5.** Testing
 
 Unit tests are encouraged but not required; if you're trying to implement this
 solution in a different language we'll understand if you spend your time on the
@@ -175,13 +157,13 @@ OK
 
 # Logistics
 
-__1.__ Timeframe
+**1.** Timeframe
 
 You should take a max of three hours to complete this exercise. We want to be
 both respectful of your time and fair to other candidates who might not have
 a whole weekend to work on it.
 
-__2.__ Git
+**2.** Git
 
 You will need to use git for this exercise. To get these instructions and a
 repo with test scripts do the following:
@@ -198,7 +180,7 @@ $ git clone git@github.com:turnitin/pgh-backend-code-exercise.git
 $ git clone https://pusheen@github.com/turnitin/pgh-backend-code-exercise.git
 ```
 
-__3.__ Remote
+**3.** Remote
 
 Once you are done you can put your solution in your own repository by adding it
 as a remote and pushing to it.
@@ -215,27 +197,27 @@ $ git remote add myrepo git@github.com:pusheen/backend-code-exercise.git
 $ git push myrepo master
 ```
 
-__4.__ Access
+**4.** Access
 
 Give Github user `cwinters` read access to your repository.
 
-__5.__ Notify us
+**5.** Notify us
 
 At least a day before your in-person interview, email `cwinters@turnitin.com`
 your repo address.
 
-__6.__ Resources
+**6.** Resources
 
 Here are some resources that may be useful:
 
-* [Docker for Mac](https://docs.docker.com/docker-for-mac/) or
+- [Docker for Mac](https://docs.docker.com/docker-for-mac/) or
   [Docker for Windows](https://docs.docker.com/docker-for-windows/) should
   help you get Docker installed if you don't already have it. (If you're using
   a Linux desktop you can just `sudo apt-get install docker` -- lucky you!)
   Another resource is [Docker Machine](https://docs.docker.com/machine/) which
   walks you through installing Docker on a VM running on VirtualBox; you may
   prefer that if you've already got VirtualBox installed.
-* [Docker Compose](https://docs.docker.com/compose/) -- This should already be
+- [Docker Compose](https://docs.docker.com/compose/) -- This should already be
   installed if you use the Docker for Mac/Windows options, but if not it's just
   a binary you can install. Note that the
   [sample project](https://docs.docker.com/compose/gettingstarted/) uses Flask!
